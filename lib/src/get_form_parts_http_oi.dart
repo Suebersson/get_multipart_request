@@ -1,6 +1,5 @@
+import 'dart:io';
 import 'dart:developer' show log;
-import 'dart:typed_data' show Uint8List;
-import 'dart:io' show HttpRequest;
 import 'package:mime/mime.dart';
 
 import './chunk_stream.dart';
@@ -13,9 +12,11 @@ extension ComplementForRequestMultipartInHttpOI on HttpRequest {
 
     final List<PartForm> parts = [];
 
-    final String contentType = headers.contentType?.mimeType ?? '';
+    final ContentType? contentType = headers.contentType;
 
-    if (!contentType.contains('multipart/form-data')) {
+    final String mimeType = contentType?.mimeType ?? '';
+
+    if (!mimeType.contains('multipart/form-data')) {
       log(
         'O content-type deve ser do tipo [multipart/form-data]',
         name: 'getFormParts',
@@ -25,23 +26,11 @@ extension ComplementForRequestMultipartInHttpOI on HttpRequest {
 
     try {
 
-      final String boundary = headers.contentType?.parameters['boundary'] 
+      final String boundary = contentType?.parameters['boundary'] 
         ?? FormDataFieldExeception.generate<String>('O boundary não foi definido');
 
-      final Stream<Uint8List> body = asBroadcastStream();
-
-      final bool isEmpty = await body.isEmpty;
-
-      if (isEmpty) {
-        log(
-          'O corpo da requisição não foi definido',
-          name: 'getFormParts',
-        );
-        return parts;
-      }
-
       final Stream<MimeMultipart> multPartsStream = MimeMultipartTransformer(boundary)
-        .bind(body).asBroadcastStream();
+        .bind(this).asBroadcastStream();
 
         await multPartsStream.forEach((MimeMultipart part) async{
           final Map<String, String> headers = part.headers;
