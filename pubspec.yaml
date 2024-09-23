@@ -11,7 +11,7 @@ dependencies:
   shelf: ^1.4.2
   http: ^1.1.0
   mime: ^1.0.6
-  http_parser: ^4.1.0
+  http_parser: ^4.0.2
 
 dev_dependencies:
   lints: ^4.0.0
