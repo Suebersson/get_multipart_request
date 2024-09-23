@@ -11,6 +11,24 @@
             "program": "${workspaceFolder}\\example\\main.dart",
         },
         {
+            "name": "Server with Shelf",
+            "request": "launch",
+            "type": "dart",
+            "program": "${workspaceFolder}\\servers\\shelf\\main.dart",
+        },
+        {
+            "name": "Server with Http",
+            "request": "launch",
+            "type": "dart",
+            "program": "${workspaceFolder}\\servers\\http\\main.dart",
+        },
+        {
+            "name": "Server with dart io",
+            "request": "launch",
+            "type": "dart",
+            "program": "${workspaceFolder}\\servers\\io\\main.dart",
+        },
+        {
             "name": "Update git repository",
             "type": "PowerShell",
             "request": "launch",

@@ -27,7 +27,20 @@ extension ComplementForRequestMultipartInHttpOI on HttpRequest {
     try {
 
       final String boundary = contentType?.parameters['boundary'] 
-        ?? FormDataFieldExeception.generate<String>('O boundary não foi definido');
+        ?? PartFormExeception.generate<String>('O boundary não foi definido');
+
+      // final List<List<int>> bodyParts = await toList();
+
+      // if (bodyParts.isEmpty) {
+      //   log(
+      //     'O body da requisição não foi definido',
+      //     name: 'getFormParts',
+      //   );
+      //   return parts;
+      // }
+
+      // final Stream<MimeMultipart> multPartsStream = MimeMultipartTransformer(boundary)
+      //   .bind(Stream.fromIterable(bodyParts)).asBroadcastStream();
 
       final Stream<MimeMultipart> multPartsStream = MimeMultipartTransformer(boundary)
         .bind(this).asBroadcastStream();
@@ -54,17 +67,18 @@ extension ComplementForRequestMultipartInHttpOI on HttpRequest {
         error: error,
         stackTrace: stackTrace,
       );
-      throw FormDataFieldExeception(error.message);
+      throw PartFormExeception(error.message);
     } on MimeMultipartException catch(error, stackTrace) {
-      final String message = 'Erro ao tentar carregar os dados da lista de objetos [MimeMultipart]';
+      final String message = 'Erro ao tentar carregar os dados [Stream<MimeMultipart>], '
+        'provavelmente os dados do body na requisição multipart está totalmente vazia';
       log(
         message,
         name: 'getFormParts',
         error: error,
         stackTrace: stackTrace,
       );
-      throw FormDataFieldExeception(message);
-    } on FormDataFieldExeception catch(error, stackTrace) {
+      throw PartFormExeception(message);
+    } on PartFormExeception catch(error, stackTrace) {
       log(
         error.message,
         name: 'getFormParts',
@@ -81,7 +95,7 @@ extension ComplementForRequestMultipartInHttpOI on HttpRequest {
         error: error,
         stackTrace: stackTrace,
       );
-      throw FormDataFieldExeception(message);
+      throw PartFormExeception(message);
     }
   }
 

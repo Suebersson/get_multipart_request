@@ -27,38 +27,39 @@ extension ComplementForRequestMultipartInShelf on Request {
 
       final MediaType mediaType = MediaType.parse(contentType);
       final String boundary = mediaType.parameters['boundary'] 
-        ?? FormDataFieldExeception.generate<String>('O boundary não foi definido');
+        ?? PartFormExeception.generate<String>('O boundary não foi definido');
 
-      final Stream<List<int>> body = read().asBroadcastStream();
+      // final List<List<int>> bodyParts = await read().toList();
+      
+      // if (bodyParts.isEmpty) {
+      //   log(
+      //     'O body da requisição não foi definido',
+      //     name: 'getFormParts',
+      //   );
+      //   return parts;
+      // }
 
-      final bool isEmpty = await body.isEmpty;
-
-      if (isEmpty) {
-        log(
-          'O corpo da requisição não foi definido',
-          name: 'getFormParts',
-        );
-        return parts;
-      }
+      // final Stream<MimeMultipart> multPartsStream = MimeMultipartTransformer(boundary)
+      //   .bind(Stream.fromIterable(bodyParts)).asBroadcastStream();
 
       final Stream<MimeMultipart> multPartsStream = MimeMultipartTransformer(boundary)
-        .bind(body).asBroadcastStream();
+        .bind(read()).asBroadcastStream();
 
-        await multPartsStream.forEach((MimeMultipart part) async{
-          final Map<String, String> headers = part.headers;
-          final String contentDisposition = headers.contentDisposition;
-          parts.add(
-            PartForm(
-              name: headers.getFormPartName(contentDisposition), 
-              fileName: headers.getFormPartFileName(contentDisposition), 
-              contentType: headers.contentType, 
-              bytes: await readByteStream(part),
-            ),
-          );
-        },);
+      await multPartsStream.forEach((MimeMultipart part) async{
+        final Map<String, String> headers = part.headers;
+        final String contentDisposition = headers.contentDisposition;
+        parts.add(
+          PartForm(
+            name: headers.getFormPartName(contentDisposition), 
+            fileName: headers.getFormPartFileName(contentDisposition), 
+            contentType: headers.contentType, 
+            bytes: await readByteStream(part),
+          ),
+        );
+      },);
 
       return parts;
-      
+
     } on StateError catch(error, stackTrace) {
       log(
         error.message,
@@ -66,17 +67,18 @@ extension ComplementForRequestMultipartInShelf on Request {
         error: error,
         stackTrace: stackTrace,
       );
-      throw FormDataFieldExeception(error.message);
+      throw PartFormExeception(error.message);
     } on MimeMultipartException catch(error, stackTrace) {
-      final String message = 'Erro ao tentar carregar os dados da lista de objetos [MimeMultipart]';
+      final String message = 'Erro ao tentar carregar os dados [Stream<MimeMultipart>], '
+        'provavelmente os dados do body na requisição multipart está totalmente vazia';
       log(
         message,
         name: 'getFormParts',
         error: error,
         stackTrace: stackTrace,
       );
-      throw FormDataFieldExeception(message);
-    } on FormDataFieldExeception catch(error, stackTrace) {
+      throw PartFormExeception(message);
+    } on PartFormExeception catch(error, stackTrace) {
       log(
         error.message,
         name: 'getFormParts',
@@ -93,7 +95,7 @@ extension ComplementForRequestMultipartInShelf on Request {
         error: error,
         stackTrace: stackTrace,
       );
-      throw FormDataFieldExeception(message);
+      throw PartFormExeception(message);
     }
   }
 
