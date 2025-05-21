@@ -1,4 +1,4 @@
-library get_multipart_request;
+library;
 
 export './src/chunk_stream.dart';
 export './src/part_form.dart';
