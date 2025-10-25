@@ -28,7 +28,7 @@ extension ComplementForRequestMultipartInHttp on Request {
 
       final MediaType mediaType = MediaType.parse(contentType);
       final String boundary = mediaType.parameters['boundary'] 
-        ?? PartFormExeception.generate<String>('O boundary não foi definido');
+        ?? PartFormException.generate<String>('O boundary não foi definido');
 
       final Uint8List bytes = bodyBytes;
 
@@ -67,7 +67,7 @@ extension ComplementForRequestMultipartInHttp on Request {
         error: error,
         stackTrace: stackTrace,
       );
-      throw PartFormExeception(error.message);
+      throw PartFormException(error.message);
     } on MimeMultipartException catch(error, stackTrace) {
       final String message = 'Erro ao tentar carregar os dados [Stream<MimeMultipart>], '
         'provavelmente os dados do body na requisição multipart está totalmente vazia';
@@ -77,8 +77,8 @@ extension ComplementForRequestMultipartInHttp on Request {
         error: error,
         stackTrace: stackTrace,
       );
-      throw PartFormExeception(message);
-    } on PartFormExeception catch(error, stackTrace) {
+      throw PartFormException(message);
+    } on PartFormException catch(error, stackTrace) {
       log(
         error.message,
         name: 'getFormParts',
@@ -95,7 +95,7 @@ extension ComplementForRequestMultipartInHttp on Request {
         error: error,
         stackTrace: stackTrace,
       );
-      throw PartFormExeception(message);
+      throw PartFormException(message);
     }
   }
 

@@ -5,7 +5,7 @@ import 'dart:typed_data';
 Future<Uint8List> readByteStream(Stream<List<int>> input, {int? maxSize}) async {
 
   if ((maxSize ?? 1) < 0) {
-    throw ChunkStreamExeception('O atributo maxSize deve ser positivo: $maxSize');
+    throw ChunkStreamException('O atributo maxSize deve ser positivo: $maxSize');
   }
 
   final BytesBuilder result = BytesBuilder();
@@ -13,7 +13,7 @@ Future<Uint8List> readByteStream(Stream<List<int>> input, {int? maxSize}) async 
   await for (final List<int> chunk in input) {
     result.add(chunk);
     if (maxSize != null && result.length > maxSize) {
-      throw ChunkStreamExeception('O comprimento dos bytes é maior do que o tamanho '
+      throw ChunkStreamException('O comprimento dos bytes é maior do que o tamanho '
         'máximo definido: $maxSize');
     }
   }
@@ -22,9 +22,9 @@ Future<Uint8List> readByteStream(Stream<List<int>> input, {int? maxSize}) async 
   
 }
 
-final class ChunkStreamExeception implements Exception {
+final class ChunkStreamException implements Exception {
   final String message;
-  const ChunkStreamExeception(this.message);
+  const ChunkStreamException(this.message);
   @override
   String toString() => message;
 }

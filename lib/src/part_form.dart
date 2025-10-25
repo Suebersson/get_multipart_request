@@ -21,10 +21,10 @@ final class PartForm {
 
 }
 
-final class PartFormExeception implements Exception {
+final class PartFormException implements Exception {
   final String message;
-  const PartFormExeception(this.message);
-  static T generate<T>(final String message) => throw PartFormExeception(message);
+  const PartFormException(this.message);
+  static T generate<T>(final String message) => throw PartFormException(message);
   @override
   String toString() => message;
 }
