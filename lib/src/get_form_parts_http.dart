@@ -2,7 +2,6 @@ import 'dart:developer' show log;
 import 'dart:typed_data' show Uint8List;
 import 'package:http/http.dart';
 import 'package:mime/mime.dart';
-import 'package:http_parser/http_parser.dart';
 
 import './chunk_stream.dart';
 import './extension.dart';

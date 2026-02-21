@@ -43,6 +43,9 @@ linter:
     # inserir uma vígula em cada atributo dos objetos
     require_trailing_commas: true
 
+    # não simplificar as variáveis nomeadas
+    simplify_variable_pattern: false
+
 analyzer:
   
   # excessões para o dart analyzer não verificar
